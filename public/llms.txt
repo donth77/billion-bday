@@ -1,0 +1,48 @@
+# Billion Second Birthday Calculator
+
+> Calculate exactly when you turn 1,000,000,000 seconds old. Enter your birth date, optional time, and timezone to discover your billionth second birthday — accurate to the second.
+
+URL: https://billionbday.com/
+
+## What This Tool Does
+
+This is a free, client-side web calculator that computes the exact moment a person turns one billion (1,000,000,000) seconds old. One billion seconds is approximately 31 years, 251 days, 13 hours, 34 minutes, and 54 seconds.
+
+Users enter their birth date (required), birth time (optional, defaults to midnight), and timezone (optional, defaults to the browser's timezone). The app then displays:
+
+- A live counter showing the user's current age in seconds, updating in real time
+- The exact date and time of their billionth second birthday
+- A progress bar showing how far they are toward 1 billion seconds
+- The number of UTC leap seconds that have occurred since their birth
+- Whether the billionth second is in the past or future, and how far away it is
+
+## Key Features
+
+- **Leap second accuracy**: Accounts for all 27 UTC leap seconds inserted between 1972 and 2017.
+- **Full timezone support**: Supports all IANA timezones via the browser's Intl API.
+- **Calendar integration**: For future billionth second dates, users can add an event to Google Calendar or download an .ics file.
+- **Sharing**: Users can share their billionth second date via the Web Share API or copy to clipboard.
+- **Localized**: Available in 19 languages — English, Spanish, French, German, Portuguese, Italian, Japanese, Korean, Chinese, Arabic, Russian, Dutch, Hindi, Turkish, Swedish, Polish, Vietnamese, Thai, and Indonesian. Arabic uses RTL layout.
+- **Accessible**: WCAG-compliant with ARIA attributes, keyboard navigation, and screen reader support.
+- **Privacy-first**: All computation happens in the browser. No data is sent to any server.
+
+## How the Calculation Works
+
+1. The user's birth date and time are converted to a UTC timestamp using the selected IANA timezone.
+2. Exactly 1,000,000,000 seconds (in milliseconds) are added to that timestamp.
+3. The resulting timestamp is the user's billionth second birthday.
+4. Leap seconds since the user's birth are counted and displayed separately, but the core calculation uses Unix time (which does not include leap seconds in its epoch math).
+
+## Common Questions
+
+- **How long is 1 billion seconds?** Approximately 31 years, 251 days, 13 hours, 34 minutes, and 54 seconds.
+- **Who has already passed their billionth second?** Anyone born before roughly mid-1994 (as of 2026).
+- **Does this account for leap years?** Yes — the calculation is timestamp-based, so leap years are inherently handled.
+- **Does this account for leap seconds?** Leap seconds are displayed for informational purposes. The core calculation uses Unix timestamps, which absorb leap seconds via UTC clock adjustments.
+- **Is my data stored anywhere?** No. Everything runs client-side in your browser. No birth date or personal data is transmitted.
+
+## Technical Details
+
+- Built with Svelte 5, TypeScript, Vite, and Tailwind CSS v4.
+- Single-page application, fully client-side rendered.
+- No backend, no cookies, no analytics.
