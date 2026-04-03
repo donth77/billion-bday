@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { leapSecondsSinceBirth } from './lib/leapSeconds';
   import { getAllTimezones, getBrowserTimezone, buildDateInTimezone } from './lib/timezone';
   import { getLocale, getTranslation, getHtmlLang, isRTL } from './lib/i18n';
@@ -19,6 +19,7 @@
   let timezone = $state(browserTz);
   let tzSearch = $state(browserTz);
   let showTzDropdown = $state(false);
+  let activeOptionIndex = $state(-1);
   let showLeapTooltip = $state(false);
   let tooltipButtonEl = $state<HTMLButtonElement | null>(null);
   let tooltipStyle = $state('');
@@ -57,6 +58,7 @@
     }
 
     canShare = typeof navigator.share === 'function';
+    document.title = t.pageTitle;
 
     start();
     document.addEventListener('visibilitychange', onVisibility);
@@ -81,6 +83,48 @@
     timezone = tz;
     tzSearch = tz;
     showTzDropdown = false;
+    activeOptionIndex = -1;
+  }
+
+  function onTzKeydown(e: KeyboardEvent) {
+    const options = filteredTimezones.slice(0, 50);
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        if (!showTzDropdown) {
+          showTzDropdown = true;
+          activeOptionIndex = 0;
+        } else {
+          activeOptionIndex = Math.min(activeOptionIndex + 1, options.length - 1);
+        }
+        tick().then(() => document.getElementById(`tz-option-${activeOptionIndex}`)?.scrollIntoView({ block: 'nearest' }));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        activeOptionIndex = Math.max(activeOptionIndex - 1, 0);
+        tick().then(() => document.getElementById(`tz-option-${activeOptionIndex}`)?.scrollIntoView({ block: 'nearest' }));
+        break;
+      case 'Enter':
+        if (showTzDropdown && activeOptionIndex >= 0 && activeOptionIndex < options.length) {
+          e.preventDefault();
+          selectTimezone(options[activeOptionIndex]);
+        }
+        break;
+      case 'Home':
+        if (showTzDropdown) {
+          e.preventDefault();
+          activeOptionIndex = 0;
+          tick().then(() => document.getElementById('tz-option-0')?.scrollIntoView({ block: 'nearest' }));
+        }
+        break;
+      case 'End':
+        if (showTzDropdown && options.length > 0) {
+          e.preventDefault();
+          activeOptionIndex = options.length - 1;
+          tick().then(() => document.getElementById(`tz-option-${activeOptionIndex}`)?.scrollIntoView({ block: 'nearest' }));
+        }
+        break;
+    }
   }
 
   const birthDate = $derived.by(() => {
@@ -243,7 +287,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'billion-second-birthday.ics';
+    a.download = 'billionbday.ics';
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -297,7 +341,7 @@
     class="w-full max-w-md bg-gray-900/70 backdrop-blur-xl border border-gray-800
            rounded-2xl p-6 sm:p-8 shadow-2xl shadow-indigo-950/40"
     role="form"
-    aria-label={t.dateOfBirth}
+    aria-label={t.subtitle}
   >
     <!-- Date (required) -->
     <div class="mb-5">
@@ -329,7 +373,7 @@
         class="block text-xs font-semibold uppercase tracking-widest text-gray-300 mb-2"
       >
         {t.timeOfBirth}
-        <span class="text-gray-500 normal-case font-normal">({t.optionalMidnight})</span>
+        <span class="text-gray-400 normal-case font-normal">({t.optionalMidnight})</span>
       </label>
       <input
         id="birthtime"
@@ -349,7 +393,7 @@
         class="block text-xs font-semibold uppercase tracking-widest text-gray-300 mb-2"
       >
         {t.timezone}
-        <span class="text-gray-500 normal-case font-normal">({t.optionalBrowser})</span>
+        <span class="text-gray-400 normal-case font-normal">({t.optionalBrowser})</span>
       </label>
       <input
         id="timezone-input"
@@ -358,11 +402,13 @@
         aria-expanded={showTzDropdown && filteredTimezones.length > 0}
         aria-controls="timezone-listbox"
         aria-autocomplete="list"
+        aria-activedescendant={showTzDropdown && activeOptionIndex >= 0 ? `tz-option-${activeOptionIndex}` : undefined}
         autocomplete="off"
         bind:value={tzSearch}
         onfocus={() => (showTzDropdown = true)}
-        onblur={() => setTimeout(() => (showTzDropdown = false), 200)}
-        oninput={() => (showTzDropdown = true)}
+        onblur={() => setTimeout(() => { showTzDropdown = false; activeOptionIndex = -1; }, 200)}
+        oninput={() => { showTzDropdown = true; activeOptionIndex = 0; }}
+        onkeydown={onTzKeydown}
         class="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-3 text-gray-100
                focus:outline-none focus:ring-2 focus:ring-indigo-500/60
                focus:border-indigo-500/40 motion-safe:transition-all"
@@ -376,8 +422,9 @@
           class="absolute z-50 top-full mt-1 w-full max-h-48 overflow-y-auto
                  bg-gray-800 border border-gray-700 rounded-lg shadow-xl"
         >
-          {#each filteredTimezones.slice(0, 50) as tz}
+          {#each filteredTimezones.slice(0, 50) as tz, i}
             <li
+              id="tz-option-{i}"
               role="option"
               aria-selected={tz === timezone}
             >
@@ -385,7 +432,7 @@
                 type="button"
                 tabindex={-1}
                 class="w-full text-left px-4 py-2 text-sm hover:bg-indigo-600/30 motion-safe:transition-colors
-                       {tz === timezone ? 'text-indigo-400 bg-indigo-600/10' : 'text-gray-300'}"
+                       {i === activeOptionIndex ? 'bg-indigo-600/30 text-indigo-300' : tz === timezone ? 'text-indigo-400 bg-indigo-600/10' : 'text-gray-300'}"
                 onmousedown={() => selectTimezone(tz)}
               >
                 {tz}
@@ -399,7 +446,7 @@
 
   <!-- Results -->
   {#if billionResult && ageSeconds != null && leapSeconds != null}
-    <div class="w-full max-w-md mt-8 space-y-4" aria-live="polite">
+    <div class="w-full max-w-md mt-8 space-y-4">
 
       <!-- Live Age Counter -->
       <section
@@ -447,6 +494,7 @@
                shadow-2xl shadow-indigo-950/40
                {billionResult.isPast ? 'border-green-800/60' : 'border-indigo-800/60'}"
         aria-label={billionResult.isPast ? t.turnedBillionPast : t.turnedBillionFuture}
+        aria-live="polite"
       >
         <div class="text-center">
           <div
@@ -469,11 +517,13 @@
               {@html t.thatWas(
                 `<span class="text-green-400 font-semibold">${formatDays(billionResult.diffDays)}</span>`,
                 billionResult.diffYears,
+                billionResult.diffDays,
               )}
             {:else}
               {@html t.thatsIn(
                 `<span class="text-indigo-400 font-semibold">${formatDays(billionResult.diffDays)}</span>`,
                 billionResult.diffYears,
+                billionResult.diffDays,
               )}
             {/if}
           </p>
@@ -499,6 +549,7 @@
                 <rect x="8" y="16" width="3" height="3" rx="0.5" fill="currentColor"/>
               </svg>
               {t.addToCalendar}
+              <span class="sr-only">{t.opensInNewTab}</span>
             </a>
 
             <button
@@ -560,8 +611,9 @@
                   aria-label={t.leapInfoLabel}
                   aria-expanded={showLeapTooltip}
                   aria-controls="leap-tooltip"
+                  aria-describedby={showLeapTooltip ? 'leap-tooltip' : undefined}
                   onclick={toggleTooltip}
-                  class="-m-2.5 p-2.5 text-gray-500 hover:text-gray-300 motion-safe:transition-colors
+                  class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-200 motion-safe:transition-colors
                          focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:rounded-sm"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4" aria-hidden="true">
@@ -570,7 +622,7 @@
                 </button>
               </div>
             </div>
-            <p class="text-xs text-gray-500">{t.leapSecondsDesc}</p>
+            <p class="text-xs text-gray-400">{t.leapSecondsDesc}</p>
           </div>
           <div class="text-4xl font-bold font-mono text-purple-400 shrink-0" aria-label="{leapSeconds} {t.leapSecondsSinceBirth}">
             {leapSeconds}
@@ -580,7 +632,7 @@
       </section>
 
       <!-- Fun fact -->
-      <div class="text-center text-xs text-gray-500 pt-2">
+      <div class="text-center text-xs text-gray-400 pt-2">
         {t.funFact}
       </div>
     </div>
@@ -597,7 +649,7 @@
     >
       <p class="font-semibold text-white mb-1">{t.leapTooltipTitle}</p>
       <p>{t.leapTooltipBody}</p>
-      <p class="mt-2 text-gray-500">{t.leapTooltipNote}</p>
+      <p class="mt-2 text-gray-400">{t.leapTooltipNote}</p>
     </div>
   {/if}
 </main>

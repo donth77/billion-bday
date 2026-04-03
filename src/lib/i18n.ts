@@ -9,8 +9,8 @@ export type Translation = {
   ageInSeconds: string;
   turnedBillionPast: string;
   turnedBillionFuture: string;
-  thatWas: (days: string, years: string) => string;
-  thatsIn: (days: string, years: string) => string;
+  thatWas: (days: string, years: string, rawDays: number) => string;
+  thatsIn: (days: string, years: string, rawDays: number) => string;
   leapSecondsSinceBirth: string;
   leapSecondsDesc: string;
   leapTooltipTitle: string;
@@ -25,12 +25,22 @@ export type Translation = {
   copied: string;
   calendarEventTitle: string;
   shareText: (dateTime: string) => string;
+  pageTitle: string;
+  opensInNewTab: string;
 };
+
+function ruPlural(n: number, one: string, few: string, many: string): string {
+  const mod10 = Math.abs(n) % 10;
+  const mod100 = Math.abs(n) % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+}
 
 const translations: Record<string, Translation> = {
   en: {
     title: '1,000,000,000 seconds',
-    subtitle: 'When is (or was) your billionth second alive?',
+    subtitle: 'When will you turn 1 billion seconds old?',
     dateOfBirth: 'Date of birth',
     timeOfBirth: 'Time of birth',
     optionalMidnight: 'optional — defaults to midnight',
@@ -55,10 +65,12 @@ const translations: Record<string, Translation> = {
     share: 'Share',
     copied: 'Copied!',
     shareText: (date) => `I turn a billion seconds old on ${date}! 🎉`,
+    pageTitle: 'Billion Second Birthday Calculator',
+    opensInNewTab: '(opens in new tab)',
   },
   es: {
     title: '1.000.000.000 segundos',
-    subtitle: '¿Cuándo es (o fue) tu segundo mil millonario?',
+    subtitle: '¿Cuándo cumplirás mil millones de segundos?',
     dateOfBirth: 'Fecha de nacimiento',
     timeOfBirth: 'Hora de nacimiento',
     optionalMidnight: 'opcional — por defecto medianoche',
@@ -83,10 +95,12 @@ const translations: Record<string, Translation> = {
     share: 'Compartir',
     copied: '¡Copiado!',
     shareText: (date) => `¡Cumplo mil millones de segundos el ${date}! 🎉`,
+    pageTitle: 'Calculadora del segundo mil millonario',
+    opensInNewTab: '(se abre en una nueva pestaña)',
   },
   fr: {
     title: '1 000 000 000 secondes',
-    subtitle: 'Quand est (ou était) votre milliardième seconde de vie ?',
+    subtitle: 'Quand atteindrez-vous un milliard de secondes ?',
     dateOfBirth: 'Date de naissance',
     timeOfBirth: 'Heure de naissance',
     optionalMidnight: 'optionnel — minuit par défaut',
@@ -111,10 +125,12 @@ const translations: Record<string, Translation> = {
     share: 'Partager',
     copied: 'Copié !',
     shareText: (date) => `J'atteindrai un milliard de secondes le ${date} ! 🎉`,
+    pageTitle: 'Calculateur du milliardième seconde',
+    opensInNewTab: '(s\'ouvre dans un nouvel onglet)',
   },
   de: {
     title: '1.000.000.000 Sekunden',
-    subtitle: 'Wann ist (oder war) deine milliardste Sekunde?',
+    subtitle: 'Wann wirst du eine Milliarde Sekunden alt?',
     dateOfBirth: 'Geburtsdatum',
     timeOfBirth: 'Geburtszeit',
     optionalMidnight: 'optional — Standard: Mitternacht',
@@ -139,10 +155,12 @@ const translations: Record<string, Translation> = {
     share: 'Teilen',
     copied: 'Kopiert!',
     shareText: (date) => `Ich werde am ${date} eine Milliarde Sekunden alt! 🎉`,
+    pageTitle: 'Milliardste-Sekunde-Rechner',
+    opensInNewTab: '(öffnet in neuem Tab)',
   },
   pt: {
     title: '1.000.000.000 segundos',
-    subtitle: 'Quando é (ou foi) o seu bilionésimo segundo de vida?',
+    subtitle: 'Quando você completará um bilhão de segundos?',
     dateOfBirth: 'Data de nascimento',
     timeOfBirth: 'Hora de nascimento',
     optionalMidnight: 'opcional — padrão meia-noite',
@@ -167,10 +185,12 @@ const translations: Record<string, Translation> = {
     share: 'Compartilhar',
     copied: 'Copiado!',
     shareText: (date) => `Vou completar um bilhão de segundos em ${date}! 🎉`,
+    pageTitle: 'Calculadora do bilionésimo segundo',
+    opensInNewTab: '(abre em nova aba)',
   },
   it: {
     title: '1.000.000.000 secondi',
-    subtitle: 'Quando è (o era) il tuo miliardesimo secondo di vita?',
+    subtitle: 'Quando raggiungerai un miliardo di secondi?',
     dateOfBirth: 'Data di nascita',
     timeOfBirth: 'Ora di nascita',
     optionalMidnight: 'opzionale — mezzanotte di default',
@@ -195,10 +215,12 @@ const translations: Record<string, Translation> = {
     share: 'Condividi',
     copied: 'Copiato!',
     shareText: (date) => `Raggiungerò un miliardo di secondi il ${date}! 🎉`,
+    pageTitle: 'Calcolatore del miliardesimo secondo',
+    opensInNewTab: '(si apre in una nuova scheda)',
   },
   ja: {
     title: '10億秒',
-    subtitle: 'あなたの誕生から10億秒目はいつですか？',
+    subtitle: '生後10億秒を迎えるのはいつ？',
     dateOfBirth: '生年月日',
     timeOfBirth: '出生時刻',
     optionalMidnight: '任意 — 未入力の場合は深夜0時',
@@ -223,10 +245,12 @@ const translations: Record<string, Translation> = {
     share: '共有',
     copied: 'コピーしました！',
     shareText: (date) => `${date}に生後10億秒を迎えます！🎉`,
+    pageTitle: '10億秒誕生日計算機',
+    opensInNewTab: '（新しいタブで開きます）',
   },
   ko: {
     title: '10억 초',
-    subtitle: '당신의 10억 번째 초는 언제인가요?',
+    subtitle: '10억 초를 맞이하는 날은 언제일까요?',
     dateOfBirth: '생년월일',
     timeOfBirth: '출생 시간',
     optionalMidnight: '선택 사항 — 기본값: 자정',
@@ -251,10 +275,12 @@ const translations: Record<string, Translation> = {
     share: '공유',
     copied: '복사됨!',
     shareText: (date) => `${date}에 10억 초를 맞이합니다! 🎉`,
+    pageTitle: '10억 초 생일 계산기',
+    opensInNewTab: '(새 탭에서 열림)',
   },
   zh: {
     title: '10亿秒',
-    subtitle: '你人生中的第十亿秒是什么时候？',
+    subtitle: '你什么时候满十亿秒？',
     dateOfBirth: '出生日期',
     timeOfBirth: '出生时间',
     optionalMidnight: '可选 — 默认为午夜',
@@ -279,10 +305,12 @@ const translations: Record<string, Translation> = {
     share: '分享',
     copied: '已复制！',
     shareText: (date) => `我将在${date}迎来第十亿秒！🎉`,
+    pageTitle: '十亿秒生日计算器',
+    opensInNewTab: '（在新标签页中打开）',
   },
   ar: {
     title: '١٬٠٠٠٬٠٠٠٬٠٠٠ ثانية',
-    subtitle: 'متى كانت أو ستكون الثانية المليارية من عمرك؟',
+    subtitle: 'متى ستبلغ مليار ثانية من عمرك؟',
     dateOfBirth: 'تاريخ الميلاد',
     timeOfBirth: 'وقت الميلاد',
     optionalMidnight: 'اختياري — يبدأ من منتصف الليل',
@@ -307,10 +335,12 @@ const translations: Record<string, Translation> = {
     share: 'مشاركة',
     copied: 'تم النسخ!',
     shareText: (date) => `سأبلغ مليار ثانية من عمري في ${date}! 🎉`,
+    pageTitle: 'حاسبة الثانية المليارية',
+    opensInNewTab: '(يفتح في علامة تبويب جديدة)',
   },
   ru: {
     title: '1 000 000 000 секунд',
-    subtitle: 'Когда наступает (или наступила) ваша миллиардная секунда жизни?',
+    subtitle: 'Когда вам исполнится миллиард секунд?',
     dateOfBirth: 'Дата рождения',
     timeOfBirth: 'Время рождения',
     optionalMidnight: 'необязательно — по умолчанию полночь',
@@ -319,8 +349,8 @@ const translations: Record<string, Translation> = {
     ageInSeconds: 'Ваш возраст в секундах',
     turnedBillionPast: 'Вы достигли миллиарда секунд',
     turnedBillionFuture: 'Вы достигнете миллиарда секунд',
-    thatWas: (d, y) => `Это было ${d} дней назад (${y} лет)`,
-    thatsIn: (d, y) => `Осталось ${d} дней (${y} лет)`,
+    thatWas: (d, y, n) => `Это было ${d} ${ruPlural(n, 'день', 'дня', 'дней')} назад (${y} лет)`,
+    thatsIn: (d, y, n) => `Осталось ${d} ${ruPlural(n, 'день', 'дня', 'дней')} (${y} лет)`,
     leapSecondsSinceBirth: 'Секунды координации с рождения',
     leapSecondsDesc: 'Дополнительные секунды, добавляемые к UTC для компенсации неравномерного вращения Земли',
     leapTooltipTitle: 'Что такое секунда координации?',
@@ -335,10 +365,12 @@ const translations: Record<string, Translation> = {
     share: 'Поделиться',
     copied: 'Скопировано!',
     shareText: (date) => `Я достигну миллиарда секунд ${date}! 🎉`,
+    pageTitle: 'Калькулятор миллиардной секунды',
+    opensInNewTab: '(откроется в новой вкладке)',
   },
   nl: {
     title: '1.000.000.000 seconden',
-    subtitle: 'Wanneer is (of was) jouw miljardste seconde?',
+    subtitle: 'Wanneer word jij een miljard seconden oud?',
     dateOfBirth: 'Geboortedatum',
     timeOfBirth: 'Geboortetijd',
     optionalMidnight: 'optioneel — standaard middernacht',
@@ -363,10 +395,12 @@ const translations: Record<string, Translation> = {
     share: 'Delen',
     copied: 'Gekopieerd!',
     shareText: (date) => `Ik bereik een miljard seconden op ${date}! 🎉`,
+    pageTitle: 'Miljardste seconde calculator',
+    opensInNewTab: '(opent in nieuw tabblad)',
   },
   hi: {
     title: '1,00,00,00,000 सेकंड',
-    subtitle: 'आपका एक अरबवाँ सेकंड कब है (या था)?',
+    subtitle: 'आप एक अरब सेकंड के कब होंगे?',
     dateOfBirth: 'जन्म तिथि',
     timeOfBirth: 'जन्म समय',
     optionalMidnight: 'वैकल्पिक — डिफ़ॉल्ट: मध्यरात्रि',
@@ -391,10 +425,12 @@ const translations: Record<string, Translation> = {
     share: 'शेयर करें',
     copied: 'कॉपी हो गया!',
     shareText: (date) => `मैं ${date} को एक अरब सेकंड का हो जाऊँगा! 🎉`,
+    pageTitle: 'अरबवां सेकंड जन्मदिन कैलकुलेटर',
+    opensInNewTab: '(नई टैब में खुलता है)',
   },
   tr: {
     title: '1.000.000.000 saniye',
-    subtitle: 'Milyarıncı saniyeniz ne zaman?',
+    subtitle: 'Bir milyar saniyeye ne zaman ulaşacaksınız?',
     dateOfBirth: 'Doğum tarihi',
     timeOfBirth: 'Doğum saati',
     optionalMidnight: 'isteğe bağlı — varsayılan: gece yarısı',
@@ -419,10 +455,12 @@ const translations: Record<string, Translation> = {
     share: 'Paylaş',
     copied: 'Kopyalandı!',
     shareText: (date) => `${date} tarihinde bir milyar saniyeye ulaşıyorum! 🎉`,
+    pageTitle: 'Milyarıncı saniye hesaplayıcı',
+    opensInNewTab: '(yeni sekmede açılır)',
   },
   sv: {
     title: '1 000 000 000 sekunder',
-    subtitle: 'När är (eller var) din miljardste sekund?',
+    subtitle: 'När fyller du en miljard sekunder?',
     dateOfBirth: 'Födelsedatum',
     timeOfBirth: 'Födelsetid',
     optionalMidnight: 'valfritt — standardvärde: midnatt',
@@ -447,10 +485,12 @@ const translations: Record<string, Translation> = {
     share: 'Dela',
     copied: 'Kopierat!',
     shareText: (date) => `Jag når en miljard sekunder den ${date}! 🎉`,
+    pageTitle: 'Miljardste sekund-kalkylator',
+    opensInNewTab: '(öppnas i ny flik)',
   },
   pl: {
     title: '1 000 000 000 sekund',
-    subtitle: 'Kiedy przypada (lub przypadła) Twoja miliardowa sekunda życia?',
+    subtitle: 'Kiedy skończysz miliard sekund?',
     dateOfBirth: 'Data urodzenia',
     timeOfBirth: 'Godzina urodzenia',
     optionalMidnight: 'opcjonalnie — domyślnie północ',
@@ -475,10 +515,12 @@ const translations: Record<string, Translation> = {
     share: 'Udostępnij',
     copied: 'Skopiowano!',
     shareText: (date) => `Miliard sekund skończę ${date}! 🎉`,
+    pageTitle: 'Kalkulator miliardowej sekundy',
+    opensInNewTab: '(otwiera się w nowej karcie)',
   },
   vi: {
     title: '1.000.000.000 giây',
-    subtitle: 'Giây thứ một tỷ của bạn là khi nào?',
+    subtitle: 'Khi nào bạn tròn một tỷ giây?',
     dateOfBirth: 'Ngày sinh',
     timeOfBirth: 'Giờ sinh',
     optionalMidnight: 'tùy chọn — mặc định nửa đêm',
@@ -503,10 +545,12 @@ const translations: Record<string, Translation> = {
     share: 'Chia sẻ',
     copied: 'Đã sao chép!',
     shareText: (date) => `Tôi sẽ đạt một tỷ giây vào ${date}! 🎉`,
+    pageTitle: 'Máy tính giây thứ một tỷ',
+    opensInNewTab: '(mở trong tab mới)',
   },
   th: {
     title: '1,000,000,000 วินาที',
-    subtitle: 'วินาทีที่หนึ่งพันล้านของคุณคือเมื่อไหร่?',
+    subtitle: 'คุณจะครบหนึ่งพันล้านวินาทีเมื่อไหร่?',
     dateOfBirth: 'วันเกิด',
     timeOfBirth: 'เวลาเกิด',
     optionalMidnight: 'ไม่จำเป็น — ค่าเริ่มต้นเที่ยงคืน',
@@ -531,10 +575,12 @@ const translations: Record<string, Translation> = {
     share: 'แชร์',
     copied: 'คัดลอกแล้ว!',
     shareText: (date) => `ฉันจะมีอายุครบหนึ่งพันล้านวินาทีในวันที่ ${date}! 🎉`,
+    pageTitle: 'เครื่องคำนวณวินาทีที่หนึ่งพันล้าน',
+    opensInNewTab: '(เปิดในแท็บใหม่)',
   },
   id: {
     title: '1.000.000.000 detik',
-    subtitle: 'Kapan detik ke-satu miliar Anda?',
+    subtitle: 'Kapan Anda berusia satu miliar detik?',
     dateOfBirth: 'Tanggal lahir',
     timeOfBirth: 'Waktu lahir',
     optionalMidnight: 'opsional — default tengah malam',
@@ -559,14 +605,17 @@ const translations: Record<string, Translation> = {
     share: 'Bagikan',
     copied: 'Disalin!',
     shareText: (date) => `Saya akan mencapai satu miliar detik pada ${date}! 🎉`,
+    pageTitle: 'Kalkulator detik ke-satu miliar',
+    opensInNewTab: '(buka di tab baru)',
   },
 };
 
-const RTL_LOCALES = new Set(['ar', 'he', 'fa', 'ur']);
+const RTL_LOCALES = new Set(['ar']);
 
 export function getLocale(): string {
-  const lang = navigator.language || 'en';
-  const base = lang.split('-')[0].toLowerCase();
+  const lang = (navigator.language || 'en').toLowerCase();
+  if (lang in translations) return lang;
+  const base = lang.split('-')[0];
   return base;
 }
 
