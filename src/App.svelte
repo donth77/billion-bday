@@ -56,6 +56,8 @@
       }
     }
 
+    canShare = typeof navigator.share === 'function';
+
     start();
     document.addEventListener('visibilitychange', onVisibility);
     document.addEventListener('click', onDocClick);
@@ -250,6 +252,7 @@
     return `${formatDate(date)}, ${formatTime(date)}`;
   }
 
+  let canShare = $state(false);
   let showCopied = $state(false);
 
   async function shareBillionDate(date: Date) {
@@ -515,21 +518,23 @@
               {t.downloadIcs}
             </button>
 
-            <button
-              type="button"
-              onclick={() => shareBillionDate(billionResult.billionDate)}
-              class="inline-flex items-center justify-center gap-2 w-full
-                     px-4 py-3 rounded-lg text-sm font-semibold
-                     bg-gray-800 hover:bg-gray-700 active:bg-gray-750
-                     text-gray-200 border border-gray-700 motion-safe:transition-colors
-                     focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-            >
-              <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
-              {showCopied ? t.copied : t.share}
-            </button>
+            {#if canShare}
+              <button
+                type="button"
+                onclick={() => shareBillionDate(billionResult.billionDate)}
+                class="inline-flex items-center justify-center gap-2 w-full
+                       px-4 py-3 rounded-lg text-sm font-semibold
+                       bg-gray-800 hover:bg-gray-700 active:bg-gray-750
+                       text-gray-200 border border-gray-700 motion-safe:transition-colors
+                       focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              >
+                <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                {showCopied ? t.copied : t.share}
+              </button>
+            {/if}
           </div>
         {/if}
       </section>
