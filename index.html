@@ -70,7 +70,7 @@
           "name": "How do I calculate my billionth second birthday?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Enter your birth date, optional birth time, and timezone into the calculator. It converts your birth moment to a UTC timestamp, adds exactly 1,000,000,000 seconds, and shows you the resulting date and time."
+            "text": "Enter your birth date, optional birth time, and timezone into the calculator. It converts your birth moment to a UTC timestamp, finds the instant when your age reaches 1,000,000,000 seconds including all UTC leap seconds since your birth, and shows the resulting date and time."
           }
         },
         {
@@ -78,7 +78,7 @@
           "name": "Does the calculator account for leap seconds?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The calculator displays the number of UTC leap seconds since your birth for informational purposes. The core calculation uses Unix timestamps, which absorb leap seconds via UTC clock adjustments, so your billionth second date is accurate."
+            "text": "Yes. The billionth-second date is computed so that elapsed Unix seconds plus the count of UTC leap seconds since your birth equals one billion — matching the live age counter."
           }
         },
         {
@@ -122,7 +122,7 @@
         <ol style="padding-left:20px;line-height:1.8;color:#d1d5db">
           <li>Enter your birth date, time (optional — defaults to midnight), and timezone.</li>
           <li>The calculator converts your birth moment to a precise UTC timestamp.</li>
-          <li>Exactly 1,000,000,000 seconds are added to find your billionth second birthday.</li>
+          <li>The app finds when your age in seconds (including inserted UTC leap seconds) reaches 1,000,000,000.</li>
           <li>Your result is displayed with a live age-in-seconds counter, progress bar, and calendar integration.</li>
         </ol>
 
@@ -150,7 +150,7 @@
         <p style="color:#d1d5db">Yes. The calculation uses Unix timestamps, which inherently account for leap years.</p>
 
         <h3 style="font-size:1rem;margin-top:16px;margin-bottom:4px">Does this account for leap seconds?</h3>
-        <p style="color:#d1d5db">Leap seconds are displayed for informational purposes. The core calculation uses Unix timestamps, which absorb leap seconds via UTC clock adjustments.</p>
+        <p style="color:#d1d5db">Yes. The billionth-second moment uses the same leap-second adjustment as the live age counter, so the date and time align with 1 billion &ldquo;UTC-inclusive&rdquo; seconds since birth.</p>
 
         <h3 style="font-size:1rem;margin-top:16px;margin-bottom:4px">Is my data stored anywhere?</h3>
         <p style="color:#d1d5db">No. Everything runs in your browser. No birth date or personal data is transmitted to any server. There are no cookies, analytics, or tracking.</p>

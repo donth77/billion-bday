@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import { leapSecondsSinceBirth } from './lib/leapSeconds';
+  import { instantAfterAdjustedElapsedSeconds, leapSecondsSinceBirth } from './lib/leapSeconds';
   import { getAllTimezones, getBrowserTimezone, buildDateInTimezone } from './lib/timezone';
   import { getLocale, getTranslation, getHtmlLang, isRTL } from './lib/i18n';
 
@@ -146,8 +146,8 @@
 
   const billionResult = $derived.by(() => {
     if (!birthDate) return null;
-    const billionMs = birthDate.getTime() + BILLION * 1000;
-    const billionDate = new Date(billionMs);
+    const billionDate = instantAfterAdjustedElapsedSeconds(birthDate, BILLION);
+    const billionMs = billionDate.getTime();
     const isPast = billionMs < now;
     const diffMs = Math.abs(now - billionMs);
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));

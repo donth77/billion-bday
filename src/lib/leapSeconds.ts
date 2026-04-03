@@ -50,3 +50,21 @@ export function countLeapSecondsBetween(from: Date, to: Date): number {
 export function leapSecondsSinceBirth(birthDate: Date): number {
   return countLeapSecondsBetween(birthDate, new Date());
 }
+
+/**
+ * The instant T where (T - birth) / 1000 + countLeapSecondsBetween(birth, T)
+ * equals `adjustedSeconds`. Matches the leap-adjusted age used in the UI.
+ */
+export function instantAfterAdjustedElapsedSeconds(
+  birth: Date,
+  adjustedSeconds: number,
+): Date {
+  let tMs = birth.getTime() + adjustedSeconds * 1000;
+  for (let i = 0; i < 64; i++) {
+    const leaps = countLeapSecondsBetween(birth, new Date(tMs));
+    const nextMs = birth.getTime() + (adjustedSeconds - leaps) * 1000;
+    if (nextMs === tMs) return new Date(tMs);
+    tMs = nextMs;
+  }
+  return new Date(tMs);
+}
