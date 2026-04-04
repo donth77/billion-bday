@@ -1,10 +1,16 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
+  import { Confetti } from 'svelte-confetti';
   import { instantAfterAdjustedElapsedSeconds, leapSecondsSinceBirth } from './lib/leapSeconds';
   import { getAllTimezones, getBrowserTimezone, buildDateInTimezone } from './lib/timezone';
   import { getLocale, getTranslation, getHtmlLang, isRTL } from './lib/i18n';
 
   const BILLION = 1_000_000_000;
+  // Mixkit Stock Music Free License — mixkit.co/free-stock-music/tag/celebration/ ("Basketball Training", Arulo, ~1:52)
+  const CELEBRATION_AUDIO_SRC = '/billion-celebration.mp3';
+
+  /** Horizontal anchor % for each confetti burst; include 100% for right edge coverage. */
+  const celebrationColumns = [5, 21, 37, 53, 69, 85, 100] as const;
 
   const locale = getLocale();
   const t = getTranslation(locale);
@@ -52,6 +58,10 @@
 
     function onEscape(e: KeyboardEvent) {
       if (e.key === 'Escape') {
+        if (showBillionCelebration) {
+          endBillionCelebration();
+          return;
+        }
         showLeapTooltip = false;
         showTzDropdown = false;
       }
@@ -67,6 +77,7 @@
 
     return () => {
       stop();
+      endBillionCelebration();
       document.removeEventListener('visibilitychange', onVisibility);
       document.removeEventListener('click', onDocClick);
       document.removeEventListener('keydown', onEscape);
@@ -134,25 +145,71 @@
 
   const ageSeconds = $derived.by(() => {
     if (!birthDate) return null;
-    const leapSecs = leapSecondsSinceBirth(birthDate);
+    const asOf = new Date(now);
+    const leapSecs = leapSecondsSinceBirth(birthDate, asOf);
     const diff = (now - birthDate.getTime()) / 1000 + leapSecs;
     return diff > 0 ? diff : null;
   });
 
+  let showBillionCelebration = $state(false);
+  let celebrationAudio: HTMLAudioElement | undefined;
+
+  function endBillionCelebration() {
+    showBillionCelebration = false;
+    if (celebrationAudio) {
+      celebrationAudio.pause();
+      celebrationAudio = undefined;
+    }
+  }
+
+  async function startBillionCelebration() {
+    if (showBillionCelebration) return;
+    showBillionCelebration = true;
+
+    const audio = new Audio(CELEBRATION_AUDIO_SRC);
+    celebrationAudio = audio;
+    audio.volume = 0.72;
+    audio.loop = true;
+
+    try {
+      await audio.play();
+    } catch {
+      // Autoplay blocked — confetti and UI still run until user closes or reloads.
+    }
+  }
+
   const leapSeconds = $derived.by(() => {
     if (!birthDate) return null;
-    return leapSecondsSinceBirth(birthDate);
+    return leapSecondsSinceBirth(birthDate, new Date(now));
+  });
+
+  const billionDate = $derived.by(() => {
+    if (!birthDate) return null;
+    return instantAfterAdjustedElapsedSeconds(birthDate, BILLION);
   });
 
   const billionResult = $derived.by(() => {
-    if (!birthDate) return null;
-    const billionDate = instantAfterAdjustedElapsedSeconds(birthDate, BILLION);
+    if (!birthDate || !billionDate) return null;
     const billionMs = billionDate.getTime();
     const isPast = billionMs < now;
     const diffMs = Math.abs(now - billionMs);
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const diffYears = (diffMs / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1);
     return { billionDate, isPast, diffDays, diffYears };
+  });
+
+  $effect(() => {
+    const bd = billionDate;
+    if (!bd) return;
+
+    const msUntil = bd.getTime() - Date.now();
+    if (msUntil <= 0 || msUntil > 2_147_483_647) return;
+
+    const id = setTimeout(() => {
+      void startBillionCelebration();
+    }, msUntil);
+
+    return () => clearTimeout(id);
   });
 
   function formatDate(date: Date): string {
@@ -650,6 +707,96 @@
       <p class="font-semibold text-white mb-1">{t.leapTooltipTitle}</p>
       <p>{t.leapTooltipBody}</p>
       <p class="mt-2 text-gray-400">{t.leapTooltipNote}</p>
+    </div>
+  {/if}
+
+  {#if showBillionCelebration}
+    <div
+      class="fixed inset-0 z-[101] pointer-events-none overflow-visible"
+      aria-hidden="true"
+    >
+      <div class="absolute -top-[50px] left-0 w-full min-h-[calc(100vh+50px)] overflow-visible">
+        {#each celebrationColumns as col (col)}
+          <div
+            class="absolute top-0 h-full w-0"
+            style="left: {col}%;"
+          >
+            <div class="relative left-1/2 -translate-x-1/2 h-full w-[min(520px,110vw)]">
+              <Confetti
+                infinite
+                amount={80}
+                duration={3200}
+                delay={[0, 140]}
+                fallDistance="100vh"
+                x={[-1.35, 1.35]}
+                y={[0.3, 1]}
+                cone
+                rounded
+                size={12}
+                colorArray={[
+                  '#818cf8',
+                  '#c084fc',
+                  '#f472b6',
+                  '#34d399',
+                  '#fbbf24',
+                  '#38bdf8',
+                ]}
+                disableForReducedMotion
+                destroyOnComplete={false}
+              />
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
+
+    <div
+      class="fixed inset-0 z-[100] bg-gray-950/70 backdrop-blur-sm"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="fixed inset-0 z-[102] flex items-center justify-center pointer-events-none px-6"
+      dir={rtl ? 'rtl' : 'ltr'}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t.celebrationAnnouncement}
+    >
+      <div
+        class="text-center max-w-xl rounded-3xl bg-gray-900/90 border border-gray-700/60
+               px-8 py-10 sm:px-12 sm:py-14 shadow-2xl shadow-indigo-950/50
+               motion-safe:animate-bounce"
+      >
+        <p
+          class="text-3xl sm:text-5xl font-extrabold leading-tight
+                 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400
+                 bg-clip-text text-transparent"
+        >
+          {t.celebrationAnnouncement}
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="fixed bottom-5 left-1/2 z-[103] -translate-x-1/2 pointer-events-auto
+             sm:left-auto sm:right-6 sm:translate-x-0"
+      dir={rtl ? 'rtl' : 'ltr'}
+    >
+      <button
+        type="button"
+        onclick={() => endBillionCelebration()}
+        class="px-4 py-2.5 rounded-xl text-sm font-semibold shadow-lg
+               bg-gray-900/95 text-gray-100 border border-gray-600
+               hover:bg-gray-800 motion-safe:transition-colors
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400
+               focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+      >
+        {t.celebrationClose}
+      </button>
+    </div>
+
+    <div class="sr-only" role="status" aria-live="polite">
+      {t.celebrationAnnouncement}
     </div>
   {/if}
 </main>

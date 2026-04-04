@@ -27,6 +27,8 @@ export type Translation = {
   shareText: (dateTime: string) => string;
   pageTitle: string;
   opensInNewTab: string;
+  celebrationAnnouncement: string;
+  celebrationClose: string;
 };
 
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -67,6 +69,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `I turn a billion seconds old on ${date}! 🎉`,
     pageTitle: 'Billion Second Birthday Calculator',
     opensInNewTab: '(opens in new tab)',
+    celebrationAnnouncement: 'Congratulations! You just turned one billion seconds old.',
+    celebrationClose: 'Close celebration',
   },
   es: {
     title: '1.000.000.000 segundos',
@@ -97,6 +101,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `¡Cumplo mil millones de segundos el ${date}! 🎉`,
     pageTitle: 'Calculadora del segundo mil millonario',
     opensInNewTab: '(se abre en una nueva pestaña)',
+    celebrationAnnouncement: '¡Felicitaciones! Acabas de cumplir mil millones de segundos.',
+    celebrationClose: 'Cerrar celebración',
   },
   fr: {
     title: '1 000 000 000 secondes',
@@ -127,6 +133,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `J'atteindrai un milliard de secondes le ${date} ! 🎉`,
     pageTitle: 'Calculateur du milliardième seconde',
     opensInNewTab: '(s\'ouvre dans un nouvel onglet)',
+    celebrationAnnouncement: 'Félicitations ! Vous venez d\'avoir un milliard de secondes.',
+    celebrationClose: 'Fermer la célébration',
   },
   de: {
     title: '1.000.000.000 Sekunden',
@@ -157,6 +165,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Ich werde am ${date} eine Milliarde Sekunden alt! 🎉`,
     pageTitle: 'Milliardste-Sekunde-Rechner',
     opensInNewTab: '(öffnet in neuem Tab)',
+    celebrationAnnouncement: 'Glückwunsch! Sie sind gerade eine Milliarde Sekunden alt geworden.',
+    celebrationClose: 'Feier schließen',
   },
   pt: {
     title: '1.000.000.000 segundos',
@@ -187,6 +197,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Vou completar um bilhão de segundos em ${date}! 🎉`,
     pageTitle: 'Calculadora do bilionésimo segundo',
     opensInNewTab: '(abre em nova aba)',
+    celebrationAnnouncement: 'Parabéns! Você acabou de completar um bilhão de segundos.',
+    celebrationClose: 'Fechar celebração',
   },
   it: {
     title: '1.000.000.000 secondi',
@@ -217,6 +229,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Raggiungerò un miliardo di secondi il ${date}! 🎉`,
     pageTitle: 'Calcolatore del miliardesimo secondo',
     opensInNewTab: '(si apre in una nuova scheda)',
+    celebrationAnnouncement: 'Congratulazioni! Hai appena compiuto un miliardo di secondi.',
+    celebrationClose: 'Chiudi festeggiamenti',
   },
   ja: {
     title: '10億秒',
@@ -247,6 +261,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `${date}に生後10億秒を迎えます！🎉`,
     pageTitle: '10億秒誕生日計算機',
     opensInNewTab: '（新しいタブで開きます）',
+    celebrationAnnouncement: 'おめでとうございます！10億秒を迎えました。',
+    celebrationClose: '閉じる',
   },
   ko: {
     title: '10억 초',
@@ -277,6 +293,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `${date}에 10억 초를 맞이합니다! 🎉`,
     pageTitle: '10억 초 생일 계산기',
     opensInNewTab: '(새 탭에서 열림)',
+    celebrationAnnouncement: '축하합니다! 방금 10억 초가 되었습니다.',
+    celebrationClose: '축하 닫기',
   },
   zh: {
     title: '10亿秒',
@@ -307,6 +325,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `我将在${date}迎来第十亿秒！🎉`,
     pageTitle: '十亿秒生日计算器',
     opensInNewTab: '（在新标签页中打开）',
+    celebrationAnnouncement: '恭喜！您刚刚满十亿秒了。',
+    celebrationClose: '关闭庆祝',
   },
   ar: {
     title: '١٬٠٠٠٬٠٠٠٬٠٠٠ ثانية',
@@ -337,6 +357,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `سأبلغ مليار ثانية من عمري في ${date}! 🎉`,
     pageTitle: 'حاسبة الثانية المليارية',
     opensInNewTab: '(يفتح في علامة تبويب جديدة)',
+    celebrationAnnouncement: 'مبروك! لقد أتممتَ مليار ثانية من العمر.',
+    celebrationClose: 'إغلاق الاحتفال',
   },
   ru: {
     title: '1 000 000 000 секунд',
@@ -367,6 +389,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Я достигну миллиарда секунд ${date}! 🎉`,
     pageTitle: 'Калькулятор миллиардной секунды',
     opensInNewTab: '(откроется в новой вкладке)',
+    celebrationAnnouncement: 'Поздравляем! Вам только что исполнился миллиард секунд.',
+    celebrationClose: 'Закрыть празднование',
   },
   nl: {
     title: '1.000.000.000 seconden',
@@ -397,6 +421,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Ik bereik een miljard seconden op ${date}! 🎉`,
     pageTitle: 'Miljardste seconde calculator',
     opensInNewTab: '(opent in nieuw tabblad)',
+    celebrationAnnouncement: 'Gefeliciteerd! Je bent zojuist een miljard seconden oud geworden.',
+    celebrationClose: 'Feest sluiten',
   },
   hi: {
     title: '1,00,00,00,000 सेकंड',
@@ -427,6 +453,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `मैं ${date} को एक अरब सेकंड का हो जाऊँगा! 🎉`,
     pageTitle: 'अरबवां सेकंड जन्मदिन कैलकुलेटर',
     opensInNewTab: '(नई टैब में खुलता है)',
+    celebrationAnnouncement: 'बधाई हो! आप अभी एक अरब सेकंड के हो गए हैं।',
+    celebrationClose: 'जश्न बंद करें',
   },
   tr: {
     title: '1.000.000.000 saniye',
@@ -457,6 +485,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `${date} tarihinde bir milyar saniyeye ulaşıyorum! 🎉`,
     pageTitle: 'Milyarıncı saniye hesaplayıcı',
     opensInNewTab: '(yeni sekmede açılır)',
+    celebrationAnnouncement: 'Tebrikler! Az önce bir milyar saniye yaşına girdiniz.',
+    celebrationClose: 'Kutlamayı kapat',
   },
   sv: {
     title: '1 000 000 000 sekunder',
@@ -487,6 +517,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Jag når en miljard sekunder den ${date}! 🎉`,
     pageTitle: 'Miljardste sekund-kalkylator',
     opensInNewTab: '(öppnas i ny flik)',
+    celebrationAnnouncement: 'Grattis! Du har precis blivit en miljard sekunder gammal.',
+    celebrationClose: 'Stäng firande',
   },
   pl: {
     title: '1 000 000 000 sekund',
@@ -517,6 +549,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Miliard sekund skończę ${date}! 🎉`,
     pageTitle: 'Kalkulator miliardowej sekundy',
     opensInNewTab: '(otwiera się w nowej karcie)',
+    celebrationAnnouncement: 'Gratulacje! Właśnie skończyłeś miliard sekund.',
+    celebrationClose: 'Zamknij świętowanie',
   },
   vi: {
     title: '1.000.000.000 giây',
@@ -547,6 +581,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Tôi sẽ đạt một tỷ giây vào ${date}! 🎉`,
     pageTitle: 'Máy tính giây thứ một tỷ',
     opensInNewTab: '(mở trong tab mới)',
+    celebrationAnnouncement: 'Chúc mừng! Bạn vừa tròn một tỷ giây tuổi.',
+    celebrationClose: 'Đóng lễ kỷ niệm',
   },
   th: {
     title: '1,000,000,000 วินาที',
@@ -577,6 +613,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `ฉันจะมีอายุครบหนึ่งพันล้านวินาทีในวันที่ ${date}! 🎉`,
     pageTitle: 'เครื่องคำนวณวินาทีที่หนึ่งพันล้าน',
     opensInNewTab: '(เปิดในแท็บใหม่)',
+    celebrationAnnouncement: 'ยินดีด้วย! คุณเพิ่งมีอายุครบหนึ่งพันล้านวินาที',
+    celebrationClose: 'ปิดการฉลอง',
   },
   id: {
     title: '1.000.000.000 detik',
@@ -607,6 +645,8 @@ const translations: Record<string, Translation> = {
     shareText: (date) => `Saya akan mencapai satu miliar detik pada ${date}! 🎉`,
     pageTitle: 'Kalkulator detik ke-satu miliar',
     opensInNewTab: '(buka di tab baru)',
+    celebrationAnnouncement: 'Selamat! Anda baru saja berusia satu miliar detik.',
+    celebrationClose: 'Tutup perayaan',
   },
 };
 

@@ -45,10 +45,10 @@ export function countLeapSecondsBetween(from: Date, to: Date): number {
 }
 
 /**
- * Count leap seconds that occurred from a given date until now.
+ * Count leap seconds that occurred from a given date until `asOf` (default: current time).
  */
-export function leapSecondsSinceBirth(birthDate: Date): number {
-  return countLeapSecondsBetween(birthDate, new Date());
+export function leapSecondsSinceBirth(birthDate: Date, asOf: Date = new Date()): number {
+  return countLeapSecondsBetween(birthDate, asOf);
 }
 
 /**
