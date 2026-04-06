@@ -653,6 +653,7 @@ const translations: Record<string, Translation> = {
 const RTL_LOCALES = new Set(['ar']);
 
 export function getLocale(): string {
+  if (typeof navigator === 'undefined') return 'en';
   const lang = (navigator.language || 'en').toLowerCase();
   if (lang in translations) return lang;
   const base = lang.split('-')[0];
@@ -663,6 +664,7 @@ export function getLocale(): string {
  * Return the full BCP 47 tag for the HTML lang attribute.
  */
 export function getHtmlLang(): string {
+  if (typeof navigator === 'undefined') return 'en';
   return navigator.language || 'en';
 }
 

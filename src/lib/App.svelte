@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import { Confetti } from 'svelte-confetti';
-  import { instantAfterAdjustedElapsedSeconds, leapSecondsSinceBirth } from './lib/leapSeconds';
-  import { getAllTimezones, getBrowserTimezone, buildDateInTimezone } from './lib/timezone';
-  import { getLocale, getTranslation, getHtmlLang, isRTL } from './lib/i18n';
+  import { instantAfterAdjustedElapsedSeconds, leapSecondsSinceBirth } from './leapSeconds';
+  import { getAllTimezones, getBrowserTimezone, buildDateInTimezone } from './timezone';
+  import { getLocale, getTranslation, getHtmlLang, isRTL } from './i18n';
 
   const BILLION = 1_000_000_000;
   // Mixkit Stock Music Free License — mixkit.co/free-stock-music/tag/celebration/ ("Basketball Training", Arulo, ~1:52)

@@ -2,6 +2,7 @@
  * Get all IANA timezone names supported by the browser.
  */
 export function getAllTimezones(): string[] {
+  if (typeof Intl === 'undefined' || !Intl.supportedValuesOf) return [];
   return Intl.supportedValuesOf('timeZone');
 }
 
@@ -9,6 +10,7 @@ export function getAllTimezones(): string[] {
  * Get the browser's current timezone.
  */
 export function getBrowserTimezone(): string {
+  if (typeof Intl === 'undefined') return 'UTC';
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
